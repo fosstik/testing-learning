@@ -1,10 +1,10 @@
 import uuid
 from posts_model import PostModel
+from fastapi import HTTPException, status
 
 posts:list = []
 
 class Post:
-
     def get_all_posts(self): 
         return posts
     
@@ -12,7 +12,8 @@ class Post:
         for item in posts: 
             if item.id == id: 
                 return item
-            
+        raise HTTPException(status_code=404, detail="Пост не найден")
+
     def update_posts(self,id,title,description, comments):
         for item in posts:
             if(item.id == id):
@@ -25,9 +26,13 @@ class Post:
                 return item
 
     def create_post(self, title, description, comments): 
-        posts.append(PostModel(title=title, description=description, comments=comments))
+        post = PostModel(title=title, description=description, comments=comments)
+        posts.append(post)
+        return post
 
     def delete_post(self, id):
         for index,item in enumerate(posts):
             if(item.id == id):
-               del posts[index]
+                del posts[index]
+                return
+        raise HTTPException(status_code=404, detail="Пост не найден")
